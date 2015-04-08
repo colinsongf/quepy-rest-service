@@ -73,8 +73,9 @@ class EpisodeCountQuestion(QuestionTemplate):
             Question(Pos("."))
 
     def interpret(self, match):
-        number_of_episodes = NumberOfEpisodesIn(match.tvshow)
-        return number_of_episodes
+        tv_show, i, j = match.tvshow
+        number_of_episodes = NumberOfEpisodesIn(tv_show)
+        return number_of_episodes, ReturnValue(i, j)
 
 
 class ShowsWithQuestion(QuestionTemplate):
@@ -91,10 +92,11 @@ class ShowsWithQuestion(QuestionTemplate):
             ((Lemma("show") | Lemma("shows")) + Pos("IN") + Actor())
 
     def interpret(self, match):
-        cast = HasActor(match.actor)
+        _actor, i, j = match.actor
+        cast = HasActor(_actor)
         show = IsTvShow() + HasCast(cast)
         show_name = NameOf(show)
-        return show_name
+        return show_name, ReturnValue(i, j)
 
 
 class CreatorOfQuestion(QuestionTemplate):
@@ -107,6 +109,7 @@ class CreatorOfQuestion(QuestionTemplate):
         Lemma("creator") + Pos("IN") + TvShow() + Question(Pos("."))
 
     def interpret(self, match):
-        creator = CreatorOf(match.tvshow)
+        tv_show, i, j = match.tvshow
+        creator = CreatorOf(tv_show)
         name = NameOf(creator)
-        return name
+        return name, ReturnValue(i, j)

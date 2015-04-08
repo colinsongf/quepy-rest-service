@@ -5,7 +5,7 @@
 # You should have received a copy of license in the LICENSE file.
 #
 # Authors: Rafael Carrascosa <rcarrascosa@machinalis.com>
-#          Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
+# Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
 
 """
 Basic questions for DBpedia.
@@ -13,11 +13,10 @@ Basic questions for DBpedia.
 
 from refo import Group, Plus, Question
 from quepy.parsing import Lemma, Pos, QuestionTemplate, Token, Particle, \
-                          Lemmas
-#from dbpedia.dsl import HasKeyword, IsRelatedTo, HasType
+    Lemmas
 from quepy.dsl import HasKeyword, IsRelatedTo, HasType
 from dsl import DefinitionOf, LabelOf, IsPlace, \
-    UTCof, LocationOf
+    UTCof, LocationOf, ReturnValue
 
 
 # Openings
@@ -25,8 +24,7 @@ LISTOPEN = Lemma("list") | Lemma("name")
 
 
 class Thing(Particle):
-    regex = Question(Pos("JJ")) + (Pos("NN") | Pos("NNP") | Pos("NNS")) |\
-            Pos("VBN")
+    regex = Question(Pos("JJ")) + (Pos("NN") | Pos("NNP") | Pos("NNS")) | Pos("VBN")
 
     def interpret(self, match):
         return HasKeyword(match.words.tokens)
@@ -40,12 +38,13 @@ class WhatIs(QuestionTemplate):
     """
 
     regex = Lemma("what") + Lemma("be") + Question(Pos("DT")) + \
-        Thing() + Question(Pos("."))
+            Thing() + Question(Pos("."))
 
     def interpret(self, match):
-        label = DefinitionOf(match.thing)
+        _thing, i, j = match.thing
+        label = DefinitionOf(_thing)
 
-        return label, "define"
+        return label, ReturnValue(i, j)
 
 
 class ListEntity(QuestionTemplate):
@@ -58,13 +57,14 @@ class ListEntity(QuestionTemplate):
     regex = LISTOPEN + entity + target
 
     def interpret(self, match):
-        print match.entity.tokens
-        entity = HasKeyword(match.entity.tokens)
-        target_type = HasKeyword(match.target.lemmas)
+        _entity, i, j = match.entity
+        entity = HasKeyword(_entity.tokens)
+        _target_type, i1, j1 = match.target
+        target_type = HasKeyword(_target_type.lemmas)
         target = HasType(target_type) + IsRelatedTo(entity)
         label = LabelOf(target)
 
-        return label, "enum"
+        return label, ReturnValue(i, j)
 
 
 class WhatTimeIs(QuestionTemplate):
@@ -76,17 +76,18 @@ class WhatTimeIs(QuestionTemplate):
     nouns = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
     place = Group(nouns, "place")
     openings = (Lemma("what") +
-        ((Token("is") + Token("the") + Question(Lemma("current")) +
-        Question(Lemma("local")) + Lemma("time")) |
-        (Lemma("time") + Token("is") + Token("it")))) | \
+                ((Token("is") + Token("the") + Question(Lemma("current")) +
+                  Question(Lemma("local")) + Lemma("time")) |
+                 (Lemma("time") + Token("is") + Token("it")))) | \
                Lemma("time")
     regex = openings + Pos("IN") + place + Question(Pos("."))
 
     def interpret(self, match):
-        place = HasKeyword(match.place.lemmas.title()) + IsPlace()
+        _place, i, j = match.place
+        place = HasKeyword(_place.lemmas.title()) + IsPlace()
         utc_offset = UTCof(place)
 
-        return utc_offset, "time"
+        return utc_offset, ReturnValue(i, j)
 
 
 class WhereIsQuestion(QuestionTemplate):
@@ -97,11 +98,12 @@ class WhereIsQuestion(QuestionTemplate):
     thing = Group(Plus(Pos("IN") | Pos("NP") | Pos("NNP") | Pos("NNPS")),
                   "thing")
     regex = Lemma("where") + Question(Lemmas("in the world")) + Lemma("be") + \
-        Question(Pos("DT")) + thing + Question(Pos("."))
+            Question(Pos("DT")) + thing + Question(Pos("."))
 
     def interpret(self, match):
-        thing = HasKeyword(match.thing.tokens)
+        _things, i, j = match.thing
+        thing = HasKeyword(_things.tokens)
         location = LocationOf(thing)
         location_name = LabelOf(location)
 
-        return location_name, "enum"
+        return location_name, ReturnValue(i, j)

@@ -15,7 +15,7 @@ from refo import Plus, Question
 from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import IsBand, LabelOf, IsMemberOf, ActiveYears, MusicGenreOf, \
-    NameOf, IsAlbum, ProducedBy
+    NameOf, IsAlbum, ProducedBy, ReturnValue
 
 
 class Band(Particle):
@@ -41,9 +41,10 @@ class BandMembersQuestion(QuestionTemplate):
     regex = (regex1 | regex2 | regex3) + Question(Pos("."))
 
     def interpret(self, match):
-        member = IsMemberOf(match.band)
+        _band_name, i, j = match.band
+        member = IsMemberOf(_band_name)
         label = LabelOf(member)
-        return label, "enum"
+        return label, ReturnValue(i, j)
 
 
 class FoundationQuestion(QuestionTemplate):
@@ -57,8 +58,9 @@ class FoundationQuestion(QuestionTemplate):
         (Lemma("form") | Lemma("found")) + Question(Pos("."))
 
     def interpret(self, match):
-        active_years = ActiveYears(match.band)
-        return active_years, "literal"
+        _band_name, i, j = match.band
+        active_years = ActiveYears(_band_name)
+        return active_years, ReturnValue(i, j)
 
 
 class GenreQuestion(QuestionTemplate):
@@ -73,9 +75,10 @@ class GenreQuestion(QuestionTemplate):
         Pos("IN") + Band() + Question(Pos("."))
 
     def interpret(self, match):
-        genre = MusicGenreOf(match.band)
+        _band_name, i, j = match.band
+        genre = MusicGenreOf(_band_name)
         label = LabelOf(genre)
-        return label, "enum"
+        return label, ReturnValue(i, j)
 
 
 class AlbumsOfQuestion(QuestionTemplate):
@@ -92,6 +95,7 @@ class AlbumsOfQuestion(QuestionTemplate):
             (Lemma("list") + Band() + Lemma("album"))
 
     def interpret(self, match):
-        album = IsAlbum() + ProducedBy(match.band)
+        _band_name, i, j = match.band
+        album = IsAlbum() + ProducedBy(_band_name)
         name = NameOf(album)
-        return name, "enum"
+        return name, ReturnValue(i, j)

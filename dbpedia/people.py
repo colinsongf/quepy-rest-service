@@ -39,7 +39,7 @@ class WhoIs(QuestionTemplate):
     def interpret(self, match):
         person_name, i, j = match.person
         definition = DefinitionOf(person_name)
-        return definition, "define"
+        return definition, ReturnValue(i, j)
 
 
 class HowOldIsQuestion(QuestionTemplate):
@@ -53,7 +53,7 @@ class HowOldIsQuestion(QuestionTemplate):
     def interpret(self, match):
         person_name, i, j = match.person
         birth_date = BirthDateOf(person_name)
-        return birth_date, "age"
+        return birth_date, ReturnValue(i, j)
 
 
 class WhereIsFromQuestion(QuestionTemplate):
@@ -84,7 +84,7 @@ class WhoAreParentsOfQuestion(QuestionTemplate):
         parents_name = HasParents(parents_name)
         return parents_name, ReturnValue(i, j)
 
-class WhoAreChildrensOfQuestion(QuestionTemplate):
+class WhoAreChildrenOfQuestion(QuestionTemplate):
     """
     EX: "Who are the children of Bill Gates"
     """
@@ -100,7 +100,3 @@ class WhoAreChildrensOfQuestion(QuestionTemplate):
     ***************** new stuff here ***********
 """
 
-class ReturnValue(object):
-    def __init__(self, i, j):
-        self.i = i
-        self.j = j

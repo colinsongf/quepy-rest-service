@@ -5,21 +5,21 @@
 # You should have received a copy of license in the LICENSE file.
 #
 # Authors: Rafael Carrascosa <rcarrascosa@machinalis.com>
-#          Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
+# Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
 
 """
 Basic questions for Freebase.
 """
 
 from refo import Question, Plus
-from dsl import DefinitionOf, NameOf, LocationOf
+from dsl import DefinitionOf, NameOf, LocationOf, ReturnValue
 from quepy.dsl import HasKeyword
 from quepy.parsing import QuestionTemplate, Particle, Lemma, Pos, Lemmas
 
 
 class Thing(Particle):
     regex = Plus(Question(Pos("JJ")) + (Pos("NN") | Pos("NNP") | Pos("NNS")) |
-            Pos("VBN"))
+                 Pos("VBN"))
 
     def interpret(self, match):
         return HasKeyword(match.words.tokens)
@@ -33,11 +33,13 @@ class WhatIs(QuestionTemplate):
     """
 
     regex = Lemma("what") + Lemma("be") + Question(Pos("DT")) + \
-        Thing() + Question(Pos("."))
+            Thing() + Question(Pos("."))
 
     def interpret(self, match):
-        label = DefinitionOf(match.thing)
-        return label
+        _thing, i, j = match.thing
+        label = DefinitionOf(_thing)
+
+        return label, ReturnValue(i, j)
 
 
 class WhereIsQuestion(QuestionTemplate):
@@ -46,9 +48,10 @@ class WhereIsQuestion(QuestionTemplate):
     """
 
     regex = Lemma("where") + Question(Lemmas("in the world")) + Lemma("be") + \
-        Question(Pos("DT")) + Thing() + Question(Pos("."))
+            Question(Pos("DT")) + Thing() + Question(Pos("."))
 
     def interpret(self, match):
-        location = LocationOf(match.thing)
+        _things, i, j = match.thing
+        location = LocationOf(_things)
         location_name = NameOf(location)
-        return location_name
+        return location_name, ReturnValue(i, j)
