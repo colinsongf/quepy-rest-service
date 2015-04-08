@@ -55,7 +55,8 @@ class Match(object):
         self._j = j
         self._particles = {particle.name: particle for particle in match
                            if isinstance(particle, Particle)}
-        print self._particles
+        #print self._particles
+
     @property
     def words(self):
         i, j = self._match.span()  # Should be (0, n)
@@ -71,6 +72,7 @@ class Match(object):
             match = Match(self._match, self._words, i, j)
             match._i = i
             match._j = j
+            ##Added by Valis' stupidity level (i,j)
             return (particle.interpret(match), i, j)
 
         try:
@@ -79,6 +81,7 @@ class Match(object):
             message = "'{}' object has no attribute '{}'"
             raise AttributeError(message.format(self.__class__.__name__, attr))
         self._check_valid_indexes(i, j, attr)
+        ##Added by Valis' stupidity level (i,j)
         return (WordList(self._words[i:j]), i, j)
 
     def _check_valid_indexes(self, i, j, attr):
@@ -109,30 +112,27 @@ class QuestionTemplate(object):
 
     def get_interpretation(self, words):
         rulename = self.__class__.__name__
-        logger.debug("Trying to match with regex: {}".format(rulename))
+        print("Trying to match with regex: {}".format(rulename))
 
         match = refo.match(self.regex + Literal(_EOL), words + [_EOL])
 
         if not match:
-            logger.debug("No match")
+            print("No match")
             return None, None
 
         try:
-            """look at the self.interpret funny stuff"""
             match = Match(match, words)
             result = self.interpret(match)
         except BadSemantic as error:
-            logger.debug(str(error))
+            print(str(error))
             return None, None
         except AttributeError as error:
-            logger.debug(str(error))
+            print(str(error))
             return None, None
-
         try:
             expression, userdata = result
         except TypeError:
             expression, userdata = result, None
-
         expression.rule_used = rulename
         return expression, userdata
 

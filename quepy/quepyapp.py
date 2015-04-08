@@ -19,10 +19,9 @@ from types import ModuleType
 from quepy import settings
 from quepy import generation
 from quepy.parsing import QuestionTemplate
-from quepy.expression import Expression
 from quepy.tagger import get_tagger, TaggingError
 from quepy.encodingpolicy import encoding_flexible_conversion
-
+from quepy.expression import Expression
 
 logger = logging.getLogger("quepy.quepyapp")
 
@@ -36,67 +35,47 @@ def install(app_name):
     """freebase"""
 
     if 'freebase' in sys.modules:
-        #delete_module('freebase')
         del sys.modules['freebase']
     if 'freebase.basic' in sys.modules:
-        #delete_module('freebase.basic')
         del sys.modules['freebase.basic']
     if 'freebase.country' in sys.modules:
-        #delete_module('freebase.country')
         del sys.modules['freebase.country']
     if 'freebase.tvshows' in sys.modules:
-        #delete_module('freebase.tvshows')
         del sys.modules['freebase.tvshows']
     if 'freebase.people' in sys.modules:
-        #delete_module('freebase.people')
         del sys.modules['freebase.people']
     if 'freebase.settings' in sys.modules:
-        #delete_module('freebase.settings')
         del sys.modules['freebase.settings']
     if 'freebase.music' in sys.modules:
-        #delete_module('freebase.music')
         del sys.modules['freebase.music']
     if 'freebase.dsl' in sys.modules:
-        #delete_module('freebase.dsl')
         del sys.modules['freebase.dsl']
     if 'freebase.movies' in sys.modules:
-        #delete_module('freebase.movies')
         del sys.modules['freebase.movies']
     if 'freebase.writers' in sys.modules:
-        #delete_module('freebase.writers')
         del sys.modules['freebase.writers']
 
     """dbpedia"""
 
     if 'dbpedia' in sys.modules:
-        #delete_module('dbpedia')
         del sys.modules['dbpedia']
     if 'dbpedia.basic' in sys.modules:
-        #delete_module('dbpedia.basic')
         del sys.modules['dbpedia.basic']
     if 'dbpedia.country' in sys.modules:
-        #delete_module('dbpedia.country')
         del sys.modules['dbpedia.country']
     if 'dbpedia.tvshows' in sys.modules:
-        #delete_module('dbpedia.tvshows')
         del sys.modules['dbpedia.tvshows']
     if 'dbpedia.people' in sys.modules:
-        #delete_module('dbpedia.people')
         del sys.modules['dbpedia.people']
     if 'dbpedia.settings' in sys.modules:
-        #delete_module('dbpedia.settings')
         del sys.modules['dbpedia.settings']
     if 'dbpedia.music' in sys.modules:
-        #delete_module('dbpedia.music')
         del sys.modules['dbpedia.music']
     if 'dbpedia.dsl' in sys.modules:
-        #delete_module('dbpedia.dsl')
         del sys.modules['dbpedia.dsl']
     if 'dbpedia.movies' in sys.modules:
-        #delete_module('dbpedia.movies')
         del sys.modules['dbpedia.movies']
     if 'dbpedia.writers' in sys.modules:
-        #delete_module('dbpedia.writers')
         del sys.modules['dbpedia.writers']
 
     print sys.modules
@@ -151,6 +130,20 @@ def question_sanitize(question):
     return question
 
 
+def _new_query_string(split_query, insert_text, i, j):
+    query = ""
+    index = 0
+    only_once = True
+    for o in split_query:
+        if index < i or index >= j:
+            query += " "+o
+        elif only_once:
+            query += insert_text
+            only_once = False
+        index += 1
+    return query
+
+
 class QuepyApp(object):
     """
     Provides the quepy application API.
@@ -203,13 +196,14 @@ class QuepyApp(object):
         """
 
         question = question_sanitize(question)
-        for target, query, userdata in self.get_merged_queries(question):
+        for target, query, userdata in self.get_queries(question):
             return target, query, userdata
         return None, None, None
 
     def get_queries(self, question):
         """
         Given `question` in natural language, it returns
+        :type self: object
         three things:
 
         - the target of the query in string format
@@ -219,14 +213,54 @@ class QuepyApp(object):
         The queries returned corresponds to the regexes that match in
         weight order.
         """
+        """
+            parse the question so that we split it if it hase "or" or
+            "and" in it
+            *( maybe on  "," also  at a later date)
+        """
+
         question = encoding_flexible_conversion(question)
-        for expression, userdata in self._iter_compiled_forms(question):
-            target, query = generation.get_code(expression, self.language)
-            message = u"Interpretation {1}: {0}"
-            print message.format(str(expression),
-                         expression.rule_used)
-            logger.debug(u"Query generated: {0}".format(query))
-            yield target, query, userdata
+        questions = question.split("and", (-1))
+        expr = Expression()
+        first_time = True
+        index = 0
+        print questions
+        for question in questions:
+            for expression, userdata in self._iter_compiled_forms(question):
+                if first_time:
+                    print expression.rule_used
+                    print userdata
+                    """
+                        -- it wont work for all the question or it will but we need more parrsing --
+                        base on the type of the expression.rule_used
+                        we can take actions to connect the next expressions
+                        to the curent one if they are more
+                    """
+                    if len(questions) > (index + 1):
+                        if expression.rule_used == "WhoAreChildrensOfQuestion":
+                            print "**************=Next query=**************************"
+                            temp_data = question.split(" ", (-1))
+                            print temp_data
+                            questions[index+1] = _new_query_string(temp_data, questions[index+1], userdata.i, userdata.j)
+                            print(questions[index+1])
+
+                    message = u"Interpretation {1}: {0}"
+                    print(message.format(str(expression),
+                                 expression.rule_used))
+                    first_time = False
+                    expr = expression
+                    expr.rule_used = expression
+                else:
+                    """
+                      will have to see if there is more to parse form question if there are mor conditions
+                      in order to make the next question base on the first query !
+                    """
+                    expr += expression
+        index += 1
+
+        target, query = generation.get_code(expr, self.language)
+        yield target, query, None
+        print(u"Query generated: {0}".format(query))
 
     def _iter_compiled_forms(self, question):
         """
@@ -240,10 +274,10 @@ class QuepyApp(object):
                            question)
             return
 
-        logger.debug(u"Tagged question:\n" +
-                     u"\n".join(u"\t{}".format(w for w in words)))
+        print words
 
         for rule in self.rules:
+            print rule
             expression, userdata = rule.get_interpretation(words)
             if expression:
                 yield expression, userdata
@@ -260,32 +294,3 @@ class QuepyApp(object):
                 if isinstance(value, str):
                     value = encoding_flexible_conversion(value)
                 setattr(settings, key, value)
-
-
-    #Added
-
-
-    def get_merged_queries(self, question):
-        """
-        Given `question` in natural language, it returns
-        three things:
-
-        - the target of the query in string format
-        - the query
-        - metadata given by the regex programmer (defaults to None)
-
-        The queries returned corresponds to the regexes that match in
-        weight order.
-        """
-        question = encoding_flexible_conversion(question)
-        expr = Expression()
-        for expression, userdata in self._iter_compiled_forms(question):
-            expr += expression
-            expr.rule_used = expression.rule_used
-
-        target, query = generation.get_code(expr, self.language)
-        message = u"Interpretation {1}: {0}"
-        print message.format(str(expr),
-                             expr.rule_used)
-        logger.debug(u"Query generated: {0}".format(query))
-        yield target, query, userdata

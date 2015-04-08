@@ -251,8 +251,6 @@ class LocationOf(FixedRelation):
     relation = "/location/location/containedby"
     reverse = True
 
-#Added
-
 
 class HasParents(FixedRelation):
     relation = "/people/person/parents"

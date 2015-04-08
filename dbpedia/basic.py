@@ -58,7 +58,7 @@ class ListEntity(QuestionTemplate):
     regex = LISTOPEN + entity + target
 
     def interpret(self, match):
-        #print match.entity.tokens
+        print match.entity.tokens
         entity = HasKeyword(match.entity.tokens)
         target_type = HasKeyword(match.target.lemmas)
         target = HasType(target_type) + IsRelatedTo(entity)

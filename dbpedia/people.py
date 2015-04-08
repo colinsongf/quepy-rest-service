@@ -15,6 +15,7 @@ from refo import Plus, Question
 from quepy.dsl import HasKeyword, FixedRelation
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import *
+from refo import *
 
 class HasType(FixedRelation):
     relation = "rdf:type"
@@ -53,12 +54,6 @@ class HowOldIsQuestion(QuestionTemplate):
         return birth_date, "age"
 
 
-class ReturnValue(object):
-    def __init__(self, i, j):
-        self.i = i
-        self.j = j
-
-
 class WhereIsFromQuestion(QuestionTemplate):
     """
     Ex: "Where is Bill Gates from?"
@@ -86,12 +81,13 @@ class WhoAreParentsOfQuestion(QuestionTemplate):
         Question(Pos(".")) | Lemma("parent") + Pos("IN") + Person() + Question(Pos("."))
 
     def interpret(self, match):
-        parents_name = HasParents(match.person)
+        _person, i, j = match.person
+        parents_name = HasParents(_person)
 
         return parents_name, "enum"
 
 
-class WhoAreChildrenOfQuestion(QuestionTemplate):
+class WhoAreChildrensOfQuestion(QuestionTemplate):
     """
     EX: "Who are the children of Bill Gates"
     """
@@ -99,5 +95,15 @@ class WhoAreChildrenOfQuestion(QuestionTemplate):
         Question(Pos(".")) | Lemma("child") + Pos("IN") + Person() + Question(Pos("."))
 
     def interpret(self, match):
-        child_name = HasChild(match.person)
-        return child_name, "enum"
+        _person, i, j = match.person
+        child_name = HasChild(_person)
+        return child_name, ReturnValue(i, j)
+
+"""
+    ***************** new stuff here ***********
+"""
+
+class ReturnValue(object):
+    def __init__(self, i, j):
+        self.i = i
+        self.j = j

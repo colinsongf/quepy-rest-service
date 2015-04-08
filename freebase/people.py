@@ -87,6 +87,11 @@ class WhoAreChildrensOfQuestion(QuestionTemplate):
         Question(Pos(".")) | Lemma("child") + Pos("IN") + Person() + Question(Pos("."))
 
     def interpret(self, match):
-        parents_name = HasChild(match.person)
+        _person, i, j = match.person
+        child_name = HasChild(_person)
+        return child_name, ReturnValue(i, j)
 
-        return parents_name, "enum"
+class ReturnValue(object):
+    def __init__(self, i, j):
+        self.i = i
+        self.j = j
