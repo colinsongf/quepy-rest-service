@@ -10,6 +10,7 @@
 """
 People related regex
 """
+from Model import ReturnValue
 
 from dsl import *
 from refo import Plus, Question
@@ -79,7 +80,7 @@ class WhoAreParentsOfQuestion(QuestionTemplate):
         return parents_name, "enum"
 
 
-class WhoAreChildrensOfQuestion(QuestionTemplate):
+class WhoAreChildrenOfQuestion(QuestionTemplate):
     """
     EX: "Who are the children's of Bill Gates"
     """
@@ -91,7 +92,3 @@ class WhoAreChildrensOfQuestion(QuestionTemplate):
         child_name = HasChild(_person)
         return child_name, ReturnValue(i, j)
 
-class ReturnValue(object):
-    def __init__(self, i, j):
-        self.i = i
-        self.j = j

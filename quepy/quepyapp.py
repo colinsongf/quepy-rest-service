@@ -15,7 +15,7 @@ import logging
 import sys
 from importlib import import_module
 from types import ModuleType
-
+from Model import ReturnModel
 from quepy import settings
 from quepy import generation
 from quepy.parsing import QuestionTemplate
@@ -196,8 +196,8 @@ class QuepyApp(object):
         """
 
         question = question_sanitize(question)
-        for target, query, userdata in self.get_queries(question):
-            return target, query, userdata
+        for returnModel in self.get_queries(question):
+            return returnModel
         return None, None, None
 
     def get_queries(self, question):
@@ -224,12 +224,14 @@ class QuepyApp(object):
         expr = Expression()
         first_time = True
         index = 0
-        print questions
+        #print questions
+        toBeReturned = ReturnModel(None, None)
         for question in questions:
             for expression, userdata in self._iter_compiled_forms(question):
                 if first_time:
-                    print expression.rule_used
-                    print userdata
+                    #print expression.rule_used
+                    toBeReturned.rule_used = expression.rule_used
+                    #print userdata
                     """
                         -- it wont work for all the question or it will but we need more parrsing --
                         base on the type of the expression.rule_used
@@ -259,7 +261,8 @@ class QuepyApp(object):
         index += 1
 
         target, query = generation.get_code(expr, self.language)
-        yield target, query, None
+        toBeReturned.query = query
+        yield toBeReturned
         print(u"Query generated: {0}".format(query))
 
     def _iter_compiled_forms(self, question):

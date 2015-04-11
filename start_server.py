@@ -1,56 +1,51 @@
 import web
+from Model import ReturnModel
 import quepy
-import sys
+import demjson
 
 urls = (
-    '/dbpedia', 'queryDbpedia',
-    '/freebase', 'queryFreebase',
-    '/', 'pathParam'
+    '/dbpedia', 'QueryDbpedia',
+    '/freebase', 'QueryFreebase',
+    '/', 'PathParam'
 )
 
 
-class pathParam:
+class PathParam:
     def GET(self):
         query_string = web.input()
-        type = query_string.type
-        #print query_string.q
-        if type == 'sparql':
+        query_type = query_string.type
+        return_model = ReturnModel("", None)
+        if query_type == 'sparql':
             dbpedia = quepy.install("dbpedia")
-            target, query, metadata = dbpedia.get_query(query_string.q)
-            #print query
-            #print metadata
-            return query
-        elif type == 'mql':
+            return_model = dbpedia.get_query(query_string.q)
+
+        elif query_type == 'mql':
             freebase = quepy.install("freebase")
-            target, query, metadata = freebase.get_query(query_string.q)
-            print query
-            return query
-        else:
-            return ""
+            return_model = freebase.get_query(query_string.q)
+
+        web.header('Content-Type', 'application/json')
+        return demjson.encode(return_model.toJSON())
 
 
-class queryDbpedia:
+class QueryDbpedia:
     def GET(self):
         query_string = web.input()
         dbpedia = quepy.install("dbpedia")
-        print dbpedia
-        target, query, metadata = dbpedia.get_query(query_string.q)
-        print target, query, metadata
-        return query
+        return_model = dbpedia.get_query(query_string.q)
+
+        web.header('Content-Type', 'application/json')
+        return demjson.encode(return_model.toJSON())
 
 
-class queryFreebase:
+class QueryFreebase:
     def GET(self):
         query_string = web.input()
         freebase = quepy.install("freebase")
-        print freebase
-        target, query, metadata = freebase.get_query(query_string.q)
-        return query
+
+        return_model = freebase.get_query(query_string.q)
+        return demjson.encode(return_model.toJSON())
 
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
     app.run()
-    # dbpedia = quepy.install("dbpedia")
-    #  target, query, metadata = dbpedia.get_query("Where is Albert Einstein from?")
-    #  print(query)

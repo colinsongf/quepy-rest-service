@@ -12,6 +12,7 @@ People related regex
 """
 
 from refo import Plus, Question
+from Model import ReturnValue
 from quepy.dsl import HasKeyword, FixedRelation
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import *
@@ -71,6 +72,7 @@ class WhereIsFromQuestion(QuestionTemplate):
 
         return label, ReturnValue(i, j)
 
+
 class WhoAreParentsOfQuestion(QuestionTemplate):
     """
     EX: "Who are the parents of Bill Gates"
@@ -84,7 +86,8 @@ class WhoAreParentsOfQuestion(QuestionTemplate):
         parents_name = HasParents(parents_name)
         return parents_name, ReturnValue(i, j)
 
-class WhoAreChildrensOfQuestion(QuestionTemplate):
+
+class WhoAreChildrenOfQuestion(QuestionTemplate):
     """
     EX: "Who are the children of Bill Gates"
     """
@@ -99,8 +102,3 @@ class WhoAreChildrensOfQuestion(QuestionTemplate):
 """
     ***************** new stuff here ***********
 """
-
-class ReturnValue(object):
-    def __init__(self, i, j):
-        self.i = i
-        self.j = j
