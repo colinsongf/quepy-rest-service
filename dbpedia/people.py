@@ -11,7 +11,6 @@
 People related regex
 """
 
-from refo import Plus, Question
 from Model import ReturnValue
 from quepy.dsl import HasKeyword, FixedRelation
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
@@ -40,7 +39,7 @@ class WhoIs(QuestionTemplate):
     def interpret(self, match):
         person_name, i, j = match.person
         definition = DefinitionOf(person_name)
-        return definition, "define"
+        return definition, ReturnValue(i, j)
 
 
 class HowOldIsQuestion(QuestionTemplate):
@@ -54,7 +53,7 @@ class HowOldIsQuestion(QuestionTemplate):
     def interpret(self, match):
         person_name, i, j = match.person
         birth_date = BirthDateOf(person_name)
-        return birth_date, "age"
+        return birth_date, ReturnValue(i, j)
 
 
 class WhereIsFromQuestion(QuestionTemplate):
@@ -71,7 +70,6 @@ class WhereIsFromQuestion(QuestionTemplate):
         label = LabelOf(birth_place)
 
         return label, ReturnValue(i, j)
-
 
 class WhoAreParentsOfQuestion(QuestionTemplate):
     """
@@ -102,3 +100,4 @@ class WhoAreChildrenOfQuestion(QuestionTemplate):
 """
     ***************** new stuff here ***********
 """
+

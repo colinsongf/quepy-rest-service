@@ -35,8 +35,9 @@ class WhoIs(QuestionTemplate):
         Question(Pos("."))
 
     def interpret(self, match):
-        definition = DefinitionOf(match.person)
-        return definition
+        person_name, i, j = match.person
+        definition = DefinitionOf(person_name)
+        return definition, ReturnValue(i, j)
 
 
 class HowOldIsQuestion(QuestionTemplate):
@@ -48,8 +49,9 @@ class HowOldIsQuestion(QuestionTemplate):
         Question(Pos("."))
 
     def interpret(self, match):
-        birth_date = BirthDateOf(match.person)
-        return birth_date
+        person_name, i, j = match.person
+        birth_date = BirthDateOf(person_name)
+        return birth_date, ReturnValue(i, j)
 
 
 class WhereIsFromQuestion(QuestionTemplate):
@@ -61,9 +63,10 @@ class WhereIsFromQuestion(QuestionTemplate):
         Question(Pos("."))
 
     def interpret(self, match):
-        birth_place = BirthPlaceOf(match.person)
+        person_name, i, j = match.person
+        birth_place = BirthPlaceOf(person_name)
         name = NameOf(birth_place)
-        return name
+        return name, ReturnValue(i, j)
 
 
 class WhoAreParentsOfQuestion(QuestionTemplate):
@@ -75,9 +78,10 @@ class WhoAreParentsOfQuestion(QuestionTemplate):
         Question(Pos(".")) | Lemma("parent") + Pos("IN") + Person() + Question(Pos("."))
 
     def interpret(self, match):
-        parents_name = HasParents(match.person)
+        person_name, i, j = match.person
+        parents_name = HasParents(person_name)
 
-        return parents_name, "enum"
+        return parents_name, ReturnValue(i, j)
 
 
 class WhoAreChildrenOfQuestion(QuestionTemplate):

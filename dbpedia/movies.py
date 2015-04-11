@@ -5,7 +5,7 @@
 # You should have received a copy of license in the LICENSE file.
 #
 # Authors: Rafael Carrascosa <rcarrascosa@machinalis.com>
-#          Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
+# Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
 
 """
 Movie related regex.
@@ -16,7 +16,7 @@ from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import IsMovie, NameOf, IsPerson, \
     DirectedBy, LabelOf, DurationOf, HasActor, HasName, ReleaseDateOf, \
-    DirectorOf, StarsIn, DefinitionOf
+    DirectorOf, StarsIn, DefinitionOf, ReturnValue
 
 nouns = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
 
@@ -71,10 +71,11 @@ class MoviesByDirectorQuestion(QuestionTemplate):
              Director() + Lemma("direct") + Question(Pos(".")))
 
     def interpret(self, match):
-        movie = IsMovie() + DirectedBy(match.director)
+        _director, i, j = match.director
+        movie = IsMovie() + DirectedBy(_director)
         movie_name = LabelOf(movie)
 
-        return movie_name, "enum"
+        return movie_name, ReturnValue(i, j)
 
 
 class MovieDurationQuestion(QuestionTemplate):
@@ -84,13 +85,14 @@ class MovieDurationQuestion(QuestionTemplate):
     """
 
     regex = ((Lemmas("how long be") + Movie()) |
-            (Lemmas("what be") + Pos("DT") + Lemma("duration") +
-             Pos("IN") + Movie())) + \
+             (Lemmas("what be") + Pos("DT") + Lemma("duration") +
+              Pos("IN") + Movie())) + \
             Question(Pos("."))
 
     def interpret(self, match):
-        duration = DurationOf(match.movie)
-        return duration, ("literal", "{} minutes long")
+        _movie, i, j = match.movie
+        duration = DurationOf(_movie)
+        return duration, ReturnValue(i, j)
 
 
 class ActedOnQuestion(QuestionTemplate):
@@ -112,9 +114,10 @@ class ActedOnQuestion(QuestionTemplate):
             (Question(Lemma("list")) + movie + Lemma("star") + Actor())
 
     def interpret(self, match):
-        movie = IsMovie() + HasActor(match.actor)
+        _actor, i, j = match.actor
+        movie = IsMovie() + HasActor(_actor)
         movie_name = NameOf(movie)
-        return movie_name, "enum"
+        return movie_name, ReturnValue(i, j)
 
 
 class MovieReleaseDateQuestion(QuestionTemplate):
@@ -124,13 +127,14 @@ class MovieReleaseDateQuestion(QuestionTemplate):
     """
 
     regex = ((Lemmas("when be") + Movie() + Lemma("release")) |
-            (Lemma("release") + Question(Lemma("date")) +
-             Pos("IN") + Movie())) + \
+             (Lemma("release") + Question(Lemma("date")) +
+              Pos("IN") + Movie())) + \
             Question(Pos("."))
 
     def interpret(self, match):
-        release_date = ReleaseDateOf(match.movie)
-        return release_date, "literal"
+        _movie, i, j = match.movie
+        release_date = ReleaseDateOf(_movie)
+        return release_date, ReturnValue(i, j)
 
 
 class DirectorOfQuestion(QuestionTemplate):
@@ -140,14 +144,15 @@ class DirectorOfQuestion(QuestionTemplate):
     """
 
     regex = ((Lemmas("who be") + Pos("DT") + Lemma("director") +
-             Pos("IN") + Movie()) |
+              Pos("IN") + Movie()) |
              (Lemma("who") + Lemma("direct") + Movie())) + \
             Question(Pos("."))
 
     def interpret(self, match):
-        director = IsPerson() + DirectorOf(match.movie)
+        _movie, i, j = match.movie
+        director = IsPerson() + DirectorOf(_movie)
         director_name = NameOf(director)
-        return director_name, "literal"
+        return director_name, ReturnValue(i, j)
 
 
 class ActorsOfQuestion(QuestionTemplate):
@@ -164,8 +169,9 @@ class ActorsOfQuestion(QuestionTemplate):
             ((Lemma("actors") | Lemma("actor")) + Pos("IN") + Movie())
 
     def interpret(self, match):
-        actor = NameOf(IsPerson() + StarsIn(match.movie))
-        return actor, "enum"
+        _movie, i, j = match.movie
+        actor = NameOf(IsPerson() + StarsIn(_movie))
+        return actor, ReturnValue(i, j)
 
 
 class PlotOfQuestion(QuestionTemplate):
@@ -180,5 +186,6 @@ class PlotOfQuestion(QuestionTemplate):
             Question(Pos("."))
 
     def interpret(self, match):
-        definition = DefinitionOf(match.movie)
-        return definition, "define"
+        _movie, i, j = match.movie
+        definition = DefinitionOf(_movie)
+        return definition, ReturnValue(i, j)

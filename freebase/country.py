@@ -34,9 +34,10 @@ class PresidentOfQuestion(QuestionTemplate):
             Country() + Question(Pos("."))
 
     def interpret(self, match):
-        president = IsPresident() + PresidentOf(match.country)
+        _country, i, j = match.country
+        president = IsPresident() + PresidentOf(_country)
         name = NameOf(OfficeHolderOf(president))
-        return name
+        return name, ReturnValue(i, j)
 
 
 class CapitalOfQuestion(QuestionTemplate):
@@ -50,9 +51,10 @@ class CapitalOfQuestion(QuestionTemplate):
         Question(Pos("DT")) + Country() + Question(Pos("."))
 
     def interpret(self, match):
-        capital = CapitalOf(match.country)
+        _country, i, j = match.country
+        capital = CapitalOf(_country)
         label = NameOf(capital)
-        return label
+        return label, ReturnValue(i, j)
 
 
 class LanguageOfQuestion(QuestionTemplate):
@@ -71,9 +73,10 @@ class LanguageOfQuestion(QuestionTemplate):
         Question(Pos("."))
 
     def interpret(self, match):
-        language = LanguageOf(match.country)
+        _country, i, j = match.country
+        language = LanguageOf(_country)
         name = NameOf(language)
-        return name
+        return name, ReturnValue(i, j)
 
 
 class PopulationOfQuestion(QuestionTemplate):
@@ -90,5 +93,6 @@ class PopulationOfQuestion(QuestionTemplate):
     regex = openings + Question(Pos("DT")) + Country() + Question(Pos("."))
 
     def interpret(self, match):
-        population = NumberOf(PopulationOf(match.country))
-        return population
+        _country, i, j = match.country
+        population = NumberOf(PopulationOf(_country))
+        return population, ReturnValue(i, j)

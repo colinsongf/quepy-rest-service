@@ -15,7 +15,7 @@ from refo import Plus, Question
 from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Pos, QuestionTemplate, Token, Particle
 from dsl import IsCountry, IncumbentOf, CapitalOf, \
-    LabelOf, LanguageOf, PopulationOf, PresidentOf
+    LabelOf, LanguageOf, PopulationOf, PresidentOf, ReturnValue
 
 
 class Country(Particle):
@@ -36,11 +36,12 @@ class PresidentOfQuestion(QuestionTemplate):
         Lemma("president") + Pos("IN") + Country() + Question(Pos("."))
 
     def interpret(self, match):
-        president = PresidentOf(match.country)
+        _country, i, j = match.country
+        president = PresidentOf(_country)
         incumbent = IncumbentOf(president)
         label = LabelOf(incumbent)
 
-        return label, "enum"
+        return label, ReturnValue(i, j)
 
 
 class CapitalOfQuestion(QuestionTemplate):
@@ -54,9 +55,10 @@ class CapitalOfQuestion(QuestionTemplate):
         Question(Pos("DT")) + Country() + Question(Pos("."))
 
     def interpret(self, match):
-        capital = CapitalOf(match.country)
+        _country, i, j = match.country
+        capital = CapitalOf(_country)
         label = LabelOf(capital)
-        return label, "enum"
+        return label, ReturnValue(i, j)
 
 
 # FIXME: the generated query needs FILTER isLiteral() to the head
@@ -77,8 +79,9 @@ class LanguageOfQuestion(QuestionTemplate):
         Question(Pos("."))
 
     def interpret(self, match):
-        language = LanguageOf(match.country)
-        return language, "enum"
+        _country, i, j = match.country
+        language = LanguageOf(_country)
+        return language, ReturnValue(i, j)
 
 
 class PopulationOfQuestion(QuestionTemplate):
@@ -95,5 +98,6 @@ class PopulationOfQuestion(QuestionTemplate):
     regex = openings + Question(Pos("DT")) + Country() + Question(Pos("."))
 
     def interpret(self, match):
-        population = PopulationOf(match.country)
-        return population, "literal"
+        _country, i, j = match.country
+        population = PopulationOf(_country)
+        return population, ReturnValue(i, j)

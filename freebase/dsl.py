@@ -5,7 +5,7 @@
 # You should have received a copy of license in the LICENSE file.
 #
 # Authors: Rafael Carrascosa <rcarrascosa@machinalis.com>
-#          Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
+# Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
 
 """
 Domain specific language of freebase app.
@@ -73,6 +73,7 @@ class IsMovie(FixedType):
 class DurationOf(FixedRelation):
     relation = "/film/film_cut/runtime"
     reverse = True
+
 
 class RuntimeOf(FixedRelation):
     relation = "/film/film/runtime"
@@ -264,3 +265,9 @@ class HasChild(FixedRelation):
 
 class HasImage(FixedDataRelation):
     relation = "/common/topic/image"
+
+
+class ReturnValue(object):
+    def __init__(self, i, j):
+        self.i = i
+        self.j = j

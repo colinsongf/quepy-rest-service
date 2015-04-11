@@ -12,7 +12,6 @@ Movie related regex.
 """
 
 from refo import Plus, Question
-from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import *
 
@@ -69,9 +68,10 @@ class MoviesByDirectorQuestion(QuestionTemplate):
              Director() + Lemma("direct") + Question(Pos(".")))
 
     def interpret(self, match):
-        movie = IsMovie() + DirectedBy(match.director)
+        _director, i, j = match.director
+        movie = IsMovie() + DirectedBy(_director)
         movie_name = NameOf(movie)
-        return movie_name
+        return movie_name, ReturnValue(i, j)
 
 
 class MovieDurationQuestion(QuestionTemplate):
@@ -86,8 +86,9 @@ class MovieDurationQuestion(QuestionTemplate):
             Question(Pos("."))
 
     def interpret(self, match):
-        duration = DurationOf(RuntimeOf(match.movie))
-        return duration
+        _movie, i, j = match.movie
+        duration = DurationOf(RuntimeOf(_movie))
+        return duration, ReturnValue(i, j)
 
 
 class ActedOnQuestion(QuestionTemplate):
@@ -109,10 +110,11 @@ class ActedOnQuestion(QuestionTemplate):
             (Question(Lemma("list")) + movie + Lemma("star") + Actor())
 
     def interpret(self, match):
-        performance = IsPerformance() + PerformanceOfActor(match.actor)
+        _actor, i, j = match.actor
+        performance = IsPerformance() + PerformanceOfActor(_actor)
         movie = IsMovie() + HasPerformance(performance)
         movie_name = NameOf(movie)
-        return movie_name
+        return movie_name, ReturnValue(i, j)
 
 
 class MovieReleaseDateQuestion(QuestionTemplate):
@@ -127,8 +129,9 @@ class MovieReleaseDateQuestion(QuestionTemplate):
             Question(Pos("."))
 
     def interpret(self, match):
-        release_date = ReleaseDateOf(match.movie)
-        return release_date
+        _movie, i, j = match.movie
+        release_date = ReleaseDateOf( _movie)
+        return release_date, ReturnValue(i, j)
 
 
 class DirectorOfQuestion(QuestionTemplate):
@@ -143,9 +146,10 @@ class DirectorOfQuestion(QuestionTemplate):
             Question(Pos("."))
 
     def interpret(self, match):
-        director = IsPerson() + DirectorOf(match.movie)
+        _movie, i, j = match.movie
+        director = IsPerson() + DirectorOf(_movie)
         director_name = NameOf(director)
-        return director_name
+        return director_name, ReturnValue(i, j)
 
 
 class ActorsOfQuestion(QuestionTemplate):
@@ -162,10 +166,11 @@ class ActorsOfQuestion(QuestionTemplate):
             ((Lemma("actors") | Lemma("actor")) + Pos("IN") + Movie())
 
     def interpret(self, match):
-        performance = IsPerformance() + PerformanceOfMovie(match.movie)
+        _movie, i, j = match.movie
+        performance = IsPerformance() + PerformanceOfMovie(_movie)
         actor = IsActor() + PerformsIn(performance)
         name = NameOf(actor)
-        return name
+        return name, ReturnValue(i, j)
 
 
 class PlotOfQuestion(QuestionTemplate):
@@ -180,5 +185,6 @@ class PlotOfQuestion(QuestionTemplate):
             Question(Pos("."))
 
     def interpret(self, match):
-        definition = DefinitionOf(match.movie)
-        return definition
+        _movie, i, j = match.movie
+        definition = DefinitionOf(_movie)
+        return definition, ReturnValue(i, j)

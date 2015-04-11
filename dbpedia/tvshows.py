@@ -8,7 +8,7 @@ from refo import Plus, Question
 from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import IsTvShow, ReleaseDateOf, IsPerson, StarsIn, LabelOf, \
-    HasShowName, NumberOfEpisodesIn, HasActor, ShowNameOf, CreatorOf
+    HasShowName, NumberOfEpisodesIn, HasActor, ShowNameOf, CreatorOf, ReturnValue
 
 nouns = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
 
@@ -39,8 +39,9 @@ class ReleaseDateQuestion(QuestionTemplate):
         Question(Pos("."))
 
     def interpret(self, match):
-        release_date = ReleaseDateOf(match.tvshow)
-        return release_date, "literal"
+        tv_show, i, j = match.tvshow
+        release_date = ReleaseDateOf(tv_show)
+        return release_date, ReturnValue(i, j)
 
 
 class CastOfQuestion(QuestionTemplate):
@@ -57,9 +58,10 @@ class CastOfQuestion(QuestionTemplate):
             (Lemmas("list actor") + Pos("IN") + TvShow())
 
     def interpret(self, match):
-        actor = IsPerson() + StarsIn(match.tvshow)
+        tv_show, i, j = match.tvshow
+        actor = IsPerson() + StarsIn(tv_show)
         name = LabelOf(actor)
-        return name, "enum"
+        return name, ReturnValue(i, j)
 
 
 class ListTvShows(QuestionTemplate):
@@ -87,8 +89,9 @@ class EpisodeCountQuestion(QuestionTemplate):
             Question(Pos("."))
 
     def interpret(self, match):
-        number_of_episodes = NumberOfEpisodesIn(match.tvshow)
-        return number_of_episodes, "literal"
+        tv_show, i, j = match.tvshow
+        number_of_episodes = NumberOfEpisodesIn(tv_show)
+        return number_of_episodes, ReturnValue(i, j)
 
 
 class ShowsWithQuestion(QuestionTemplate):
@@ -105,9 +108,10 @@ class ShowsWithQuestion(QuestionTemplate):
             ((Lemma("show") | Lemma("shows")) + Pos("IN") + Actor())
 
     def interpret(self, match):
-        show = IsTvShow() + HasActor(match.actor)
+        _actor, i, j = match.actor
+        show = IsTvShow() + HasActor(_actor)
         show_name = ShowNameOf(show)
-        return show_name, "enum"
+        return show_name, ReturnValue(i, j)
 
 
 class CreatorOfQuestion(QuestionTemplate):
@@ -119,6 +123,7 @@ class CreatorOfQuestion(QuestionTemplate):
         Lemma("creator") + Pos("IN") + TvShow() + Question(Pos("."))
 
     def interpret(self, match):
-        creator = CreatorOf(match.tvshow)
+        tv_show, i, j = match.tvshow
+        creator = CreatorOf(tv_show)
         label = LabelOf(creator)
-        return label, "enum"
+        return label, ReturnValue(i, j)

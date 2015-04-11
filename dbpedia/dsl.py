@@ -20,6 +20,7 @@ HasKeyword.language = "en"
 # Setup Fixed Type
 FixedType.fixedtyperelation = "rdf:type"
 
+
 class IsPerson(FixedType):
     fixedtype = "foaf:Person"
 
@@ -206,5 +207,12 @@ class HasChild(FixedRelation):
     relation = "dbpprop:children"
     reverse = True
 
+
 class HasImage(FixedDataRelation):
     relation = "dbpprop:hasPhotoCollection"
+
+
+class ReturnValue(object):
+    def __init__(self, i, j):
+        self.i = i
+        self.j = j

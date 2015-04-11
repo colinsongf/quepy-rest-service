@@ -49,8 +49,9 @@ class WhoWroteQuestion(QuestionTemplate):
             Question(Pos("."))
 
     def interpret(self, match):
-        author = NameOf(IsPerson() + AuthorOf(match.book))
-        return author
+        _book, i, j = match.book
+        author = NameOf(IsPerson() + AuthorOf(_book))
+        return author, ReturnValue(i, j)
 
 
 class BooksByAuthorQuestion(QuestionTemplate):
@@ -64,6 +65,7 @@ class BooksByAuthorQuestion(QuestionTemplate):
              Author() + Lemma("write") + Question(Pos(".")))
 
     def interpret(self, match):
-        book = IsBook() + HasAuthor(match.author)
+        _author, i, j = match.author
+        book = IsBook() + HasAuthor(_author)
         book_name = NameOf(book)
-        return book_name
+        return book_name, ReturnValue(i, j)
