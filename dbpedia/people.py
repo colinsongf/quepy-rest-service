@@ -17,8 +17,10 @@ from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import *
 from refo import *
 
+
 class HasType(FixedRelation):
     relation = "rdf:type"
+
 
 class Person(Particle):
     regex = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
@@ -70,6 +72,7 @@ class WhereIsFromQuestion(QuestionTemplate):
         label = LabelOf(birth_place)
 
         return label, ReturnValue(i, j)
+
 
 class WhoAreParentsOfQuestion(QuestionTemplate):
     """

@@ -47,7 +47,8 @@ class HoldsGovernmentPosition(FixedRelation):
 
 
 class DefinitionOf(FixedRelation):
-    relation = "/common/topic/description"
+    #relation = "/common/topic/description"
+    relation = "id"
     reverse = True
 
 
