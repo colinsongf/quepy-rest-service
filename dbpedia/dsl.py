@@ -33,6 +33,10 @@ class IsCountry(FixedType):
     fixedtype = "dbpedia-owl:Country"
 
 
+class IsPlace(FixedType):
+    fixedtype = "dbpedia-owl:Place"
+
+
 class IsBand(FixedType):
     fixedtype = "dbpedia-owl:Band"
 
@@ -49,6 +53,22 @@ class IsMovie(FixedType):
     fixedtype = "dbpedia-owl:Film"
 
 
+class IsMilitaryConflict(FixedType):
+    fixedtype = "dbpedia-owl:MilitaryConflict"
+
+
+class UsedInWar(FixedRelation):
+    relation = "dbpedia-owl:usedInWar"
+
+
+class UsedByCountry(FixedRelation):
+    relation = "dbpprop:usedBy"
+
+
+class ConflictLocation(FixedRelation):
+    relation = "dbpedia-owl:place"
+
+
 class HasShowName(FixedDataRelation):
     relation = "dbpprop:showName"
     language = "en"
@@ -56,6 +76,11 @@ class HasShowName(FixedDataRelation):
 
 class HasName(FixedDataRelation):
     relation = "dbpprop:name"
+    language = "en"
+
+
+class LabelOfFixedDataRelation(FixedDataRelation):
+    relation = "rdfs:label"
     language = "en"
 
 

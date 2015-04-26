@@ -70,6 +70,14 @@ class IsMovie(FixedType):
     fixedtype = "/film/film"
 
 
+class IsMilitaryConflict(FixedType):
+    fixedtype = "/military/military_conflict"
+
+
+class IsEvent(FixedRelation):
+    relation = "/location/location/events"
+
+
 class DurationOf(FixedRelation):
     relation = "/film/film_cut/runtime"
     reverse = True
@@ -151,6 +159,14 @@ class IsMusicGenre(FixedType):
     fixedtype = "/music/genre"
 
 
+class IsBeforeYear(FixedDataRelation):
+    relation = "release_date>="
+
+
+class IsAfterYear(FixedDataRelation):
+    relation = "release_date>="
+
+
 class MusicGenreOf(FixedRelation):
     relation = "/music/artist/genre"
     reverse = True
@@ -160,9 +176,17 @@ class IsAlbum(FixedType):
     fixedtype = "/music/album"
 
 
+class ArtistAlbum(FixedRelation):
+    relation = "/music/artist/album"
+
+
 class ProducedBy(FixedRelation):
     relation = "/music/artist/album"
     reverse = True
+
+
+class IsLocation(FixedType):
+    fixedtype = "/location/location"
 
 
 class IsCountry(FixedType):
@@ -239,6 +263,10 @@ class IsBook(FixedType):
     fixedtype = "/book/book"
 
 
+class IsMusicTrack(FixedType):
+    fixedtype = "/music/track"
+
+
 class AuthorOf(FixedRelation):
     relation = "/book/written_work/author"
     reverse = True
@@ -266,6 +294,9 @@ class HasChild(FixedRelation):
 class HasImage(FixedDataRelation):
     relation = "/common/topic/image"
 
+
+class SongsAboutStuff(FixedRelation):
+    relation = "name~="
 
 class ReturnValue(object):
     def __init__(self, i, j):

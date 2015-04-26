@@ -99,3 +99,5 @@ class AlbumsOfQuestion(QuestionTemplate):
         album = IsAlbum() + ProducedBy(_band_name)
         name = NameOf(album)
         return name, ReturnValue(i, j)
+
+

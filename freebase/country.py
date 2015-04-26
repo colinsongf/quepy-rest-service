@@ -27,7 +27,7 @@ class Country(Particle):
 
 class PresidentOfQuestion(QuestionTemplate):
     """
-    Ex: "list presidents of Argentina?"
+    Ex: " "
     """
 
     regex = Question(Lemma("list")) + Lemma("president") + Pos("IN") + \

@@ -220,7 +220,7 @@ class QuepyApp(object):
         """
 
         question = encoding_flexible_conversion(question)
-        questions = question.split("and", (-1))
+        questions = question.split(" and ", (-1))
         expr = Expression()
         first_time = True
         index = 0
@@ -271,6 +271,9 @@ class QuepyApp(object):
         """
 
         try:
+            print(u" ****************************** \n")
+            print self.tagger(question)
+            print(u" ****************************** \n")
             words = list(self.tagger(question))
         except TaggingError:
             logger.warning(u"Can't parse tagger's output for: '%s'",
