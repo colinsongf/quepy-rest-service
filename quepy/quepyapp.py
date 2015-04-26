@@ -13,6 +13,8 @@ Implements the Quepy Application API
 
 import logging
 import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 from importlib import import_module
 from types import ModuleType
 from Model import ReturnModel

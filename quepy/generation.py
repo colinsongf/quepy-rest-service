@@ -28,7 +28,7 @@ def get_code(expression, language):
     """
 
     if language == "sparql":
-        return expression_to_sparql(expression) #add True for all information
+        return expression_to_sparql(expression, True) #add True for all information
     elif language == "dot":
         return expression_to_dot(expression)
     elif language == "mql":
