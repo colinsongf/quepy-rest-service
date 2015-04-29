@@ -38,6 +38,18 @@ class FixedRelation(Expression):
         self.decapitate(self.relation, reverse)
 
 
+class FixedRelationDataExtract(Expression):
+
+    relation = None
+
+    def __init__(self):
+        super(FixedRelationDataExtract, self).__init__()
+        if self.relation is None:
+            raise ValueError("You *must* define the `relation` "
+                 "class attribute to use this class.")
+        self.add_date(self.relation)
+
+
 class FixedType(Expression):
     """
     Expression for a fixed type.

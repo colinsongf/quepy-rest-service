@@ -11,7 +11,7 @@
 Domain specific language of freebase app.
 """
 
-from quepy.dsl import FixedType, FixedRelation, FixedDataRelation, HasKeyword
+from quepy.dsl import FixedType, FixedRelation, FixedDataRelation, HasKeyword, FixedRelationDataExtract
 
 # Setup the Keywords for this application
 HasKeyword.relation = "/type/object/name"
@@ -27,6 +27,14 @@ class NameOf(FixedRelation):
 
 class HasName(FixedDataRelation):
     relation = "/type/object/name"
+
+
+class HasNationality(FixedDataRelation):
+    relation = "/people/person/nationality"
+
+
+class MilitaryCommander(FixedRelation):
+    relation = "military_commander"
 
 
 class GovernmentPosition(FixedDataRelation):
@@ -50,6 +58,10 @@ class DefinitionOf(FixedRelation):
     #relation = "/common/topic/description"
     relation = "id"
     reverse = True
+
+
+class HasId(FixedRelationDataExtract):
+    relation = "id"
 
 
 class IsPerson(FixedType):
@@ -77,6 +89,15 @@ class IsMilitaryConflict(FixedType):
 
 class IsEvent(FixedRelation):
     relation = "/location/location/events"
+    reverse = True
+
+
+class IsCommander(FixedRelation):
+    relation = "/military/military_conflict/commanders"
+
+
+class IsMilitaryPersonnelInvolved(FixedRelation):
+    relation = "/military/military_conflict/military_personnel_involved"
 
 
 class DurationOf(FixedRelation):
@@ -161,11 +182,27 @@ class IsMusicGenre(FixedType):
 
 
 class IsBeforeYear(FixedDataRelation):
-    relation = "release_date>="
+    relation = "release_date<="
+
+
+class IsBornAfterYear(FixedDataRelation):
+    relation = "/people/person/date_of_birth>="
+
+
+class IsBornBeforeYear(FixedDataRelation):
+    relation = "/people/person/date_of_birth<="
 
 
 class IsAfterYear(FixedDataRelation):
     relation = "release_date>="
+
+
+class EventStartDateAfter(FixedDataRelation):
+    relation = "/time/event/start_date>="
+
+
+class EventStartDateBefore(FixedDataRelation):
+    relation = "/time/event/start_date<="
 
 
 class MusicGenreOf(FixedRelation):
@@ -298,6 +335,7 @@ class HasImage(FixedDataRelation):
 
 class SongsAboutStuff(FixedRelation):
     relation = "name~="
+
 
 class ReturnValue(object):
     def __init__(self, i, j):

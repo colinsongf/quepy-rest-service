@@ -12,9 +12,60 @@ Basic questions for Freebase.
 """
 
 from refo import Question, Plus
-from dsl import DefinitionOf, NameOf, LocationOf, ReturnValue
+from dsl import *
 from quepy.dsl import HasKeyword
 from quepy.parsing import QuestionTemplate, Particle, Lemma, Pos, Lemmas
+
+
+nouns = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+
+
+class Location(Particle):
+    regex = Plus(Pos("DT") | nouns)
+
+    def interpret(self, match):
+        name = match.words.tokens.title()
+        return IsLocation() + HasKeyword(name)
+
+
+class Movie(Particle):
+    regex = Question(Pos("DT")) + nouns
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return IsMovie() + HasName(name)
+
+
+class Band(Particle):
+    regex = Question(Pos("DT")) + Plus(Pos("NN") | Pos("NNP"))
+
+    def interpret(self, match):
+        name = match.words.tokens.title()
+        return IsBand() + HasKeyword(name)
+
+
+class TvShow(Particle):
+    regex = Plus(Question(Pos("DT")) + nouns)
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return IsTvShow() + HasName(name)
+
+
+class Book(Particle):
+    regex = Plus(nouns)
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return IsBook() + HasKeyword(name)
+
+
+class MilitaryConflict(Particle):
+    regex = Question(Pos("DT")) + Plus(nouns | Pos("IN"))
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return IsMilitaryConflict() + HasName(name)
 
 
 class Thing(Particle):
@@ -55,3 +106,57 @@ class WhereIsQuestion(QuestionTemplate):
         location = LocationOf(_things)
         location_name = NameOf(location)
         return location_name, ReturnValue(i, j)
+
+
+class WhatIsLocation(QuestionTemplate):
+    regex = (Lemma("what") + Lemma("is") + Lemma("location") + Location()) | (
+        Lemma("location") + Location())
+
+    def interpret(self, match):
+        _location, i, j = match.location
+        return _location + HasId(), ReturnValue(i, j)
+
+
+class WhatIsMovie(QuestionTemplate):
+    regex = (Lemma("what") + Lemma("is") + Lemma("movie") + Movie()) | (
+        Lemma("movie") + Movie())
+
+    def interpret(self, match):
+        _movie, i, j = match.movie
+        return _movie + HasId(), ReturnValue(i, j)
+
+
+class WhatIsTvShow(QuestionTemplate):
+    regex = (Lemma("what") + Lemma("is") + Lemma("tv") + Lemma("show") + TvShow()) | (
+        Lemma("tv") + Lemma("show") + TvShow())
+
+    def interpret(self, match):
+        tv_show, i, j = match.tvshow
+        return tv_show + HasId(), ReturnValue(i, j)
+
+
+class WhatIsBook(QuestionTemplate):
+    regex = (Lemma("what") + Lemma("is") + Lemma("book") + Book()) | (
+        Lemma("book") + Book())
+
+    def interpret(self, match):
+        _book, i, j = match.book
+        return _book + HasId(), ReturnValue(i, j)
+
+
+class WhatIsBand(QuestionTemplate):
+    regex = (Lemma("what") + Lemma("is") + Lemma("band") + Band()) | (
+        Lemma("band") + Band())
+
+    def interpret(self, match):
+        _band, i, j = match.band
+        return _band + HasId(), ReturnValue(i, j)
+
+
+class WhatIsBand(QuestionTemplate):
+    regex = (Lemma("what") + Lemma("is") + Lemma("military") + Lemma("conflict") + MilitaryConflict()) | (
+        Lemma("military") + Lemma("conflict") + MilitaryConflict())
+
+    def interpret(self, match):
+        _military_conflict, i, j = match.militaryconflict
+        return _military_conflict + HasId(), ReturnValue(i, j)

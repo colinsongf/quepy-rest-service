@@ -1,5 +1,4 @@
 from refo import Plus, Question
-from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import *
 
@@ -48,4 +47,16 @@ class ConflictThatTookPlaceInCountry(QuestionTemplate):
         _location, i, j = match.location
         _military_conflict = IsMilitaryConflict()
         rezultat = _military_conflict + ConflictLocation(_location)
+        return rezultat, ReturnValue(i, j)
+
+
+class PersonThatTookPartInConflict(QuestionTemplate):
+    regex = Question(Lemma("list")) + (Lemma("person") | Lemma("persons") | Lemma("people")) + (
+        Lemma("that") | Lemma("which")) + \
+            ((Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fought")) + Pos(
+        "IN") + MilitaryConflict()
+
+    def interpret(self, match):
+        military_conflict, i, j = match.militaryconflict
+        rezultat = military_conflict
         return rezultat, ReturnValue(i, j)

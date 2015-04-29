@@ -130,7 +130,7 @@ class MovieReleaseDateQuestion(QuestionTemplate):
 
     def interpret(self, match):
         _movie, i, j = match.movie
-        release_date = ReleaseDateOf( _movie)
+        release_date = ReleaseDateOf(_movie)
         return release_date, ReturnValue(i, j)
 
 

@@ -153,6 +153,18 @@ class Expression(object):
         else:
             self.nodes[self.head].append((relation, oldhead))
 
+    def add_date(self, relation):
+        """
+        Creates a new black node which is linked to the current head given
+        the relation. It's use in order to get data out of a node;
+        EX: if you want to get the id of a person you would use
+        IsPerson(GetId());
+            the IsPerson is the head node who will be linked to the new black
+            node by the relation GetId()
+        To be use when you want to get some data out of a node!
+        """
+        self.nodes[self.head].append((relation, self._add_node()))
+
     def add_data(self, relation, value):
         """
         Adds a ``relation`` to some constant ``value`` to the ``head`` of the
