@@ -11,7 +11,7 @@
 Domain specific language for DBpedia quepy.
 """
 
-from quepy.dsl import FixedType, HasKeyword, FixedRelation, FixedDataRelation
+from quepy.dsl import *
 
 # Setup the Keywords for this application
 HasKeyword.relation = "rdfs:label"
@@ -63,6 +63,22 @@ class UsedInWar(FixedRelation):
 
 class UsedByCountry(FixedRelation):
     relation = "dbpprop:usedBy"
+
+
+class PartOfBattle(FixedRelation):
+    relation = "dbpedia-owl:battle"
+
+
+class HasBirthPlace(FixedRelation):
+    relation = "dbpedia-owl:birthPlace"
+
+
+class HasDate(FixedRelation):
+    relation = "dbpedia-owl:date"
+
+
+class HasBirthDate(FixedRelation):
+    relation = "dbpedia-owl:birthDate"
 
 
 class ConflictLocation(FixedRelation):

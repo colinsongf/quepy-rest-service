@@ -40,8 +40,8 @@ class WeaponUsedByCountryInConflict(QuestionTemplate):
 
 
 class ConflictThatTookPlaceInCountry(QuestionTemplate):
-    regex = Question(Lemma("list")) + (Lemma("conflict") | Lemma("conflicts")) + (Lemma("that") | Lemma("which")) +\
-        Lemma("took") + Lemma("place") + Pos("IN") + Location()
+    regex = Question(Lemma("list")) + (Lemma("conflict") | Lemma("conflicts")) + (
+        Lemma("that") | Lemma("which")) + Lemma("took") + Lemma("place") + Pos("IN") + Location()
 
     def interpret(self, match):
         _location, i, j = match.location
@@ -52,11 +52,26 @@ class ConflictThatTookPlaceInCountry(QuestionTemplate):
 
 class PersonThatTookPartInConflict(QuestionTemplate):
     regex = Question(Lemma("list")) + (Lemma("person") | Lemma("persons") | Lemma("people")) + (
-        Lemma("that") | Lemma("which")) + \
-            ((Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fought")) + Pos(
-        "IN") + MilitaryConflict()
+        Pos("WP") | Pos("WDT")) + (
+        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
+            "fought")) + Pos("IN") + MilitaryConflict()
 
     def interpret(self, match):
         military_conflict, i, j = match.militaryconflict
-        rezultat = military_conflict
+        rezultat = IsPerson() + PartOfBattle(military_conflict)
+        return rezultat, ReturnValue(i, j)
+
+
+class PersonThatTookPartInConflictNationality(QuestionTemplate):
+    regex = Question(Lemma("list")) + (Lemma("person") | Lemma("persons") | Lemma("people")) + (
+        Pos("WP") | Pos("WDT")) + (
+        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
+            "fought")) + Pos(
+        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + (
+                Lemma("from") | Lemma("bear") + Pos("IN")) + Country()
+
+    def interpret(self, match):
+        military_conflict, i, j = match.militaryconflict
+        _nationality, i1, j1 = match.country
+        rezultat = IsPerson() + PartOfBattle(military_conflict) + HasBirthPlace(_nationality)
         return rezultat, ReturnValue(i, j)

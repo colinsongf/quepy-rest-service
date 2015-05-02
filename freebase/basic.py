@@ -153,7 +153,7 @@ class WhatIsBand(QuestionTemplate):
         return _band + HasId(), ReturnValue(i, j)
 
 
-class WhatIsBand(QuestionTemplate):
+class WhatIsMilitaryConflict(QuestionTemplate):
     regex = (Lemma("what") + Lemma("is") + Lemma("military") + Lemma("conflict") + MilitaryConflict()) | (
         Lemma("military") + Lemma("conflict") + MilitaryConflict())
 

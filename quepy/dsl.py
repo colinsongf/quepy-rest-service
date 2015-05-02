@@ -116,3 +116,4 @@ class IsRelatedTo(FixedRelation):
     pass
 # Looks weird, yes, here I am using `IsRelatedTo` as a unique identifier.
 IsRelatedTo.relation = IsRelatedTo
+

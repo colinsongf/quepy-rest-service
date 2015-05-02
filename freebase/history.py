@@ -98,23 +98,26 @@ class ConflictThatTookPlaceInCountryBeforeYear(QuestionTemplate):
 
 class PersonThatTookPartInConflict(QuestionTemplate):
     regex = Question(Lemma("list")) + (Lemma("person") | Lemma("persons") | Lemma("people")) + (
-        Lemma("that") | Lemma("which")) + \
-            ((Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fought")) + Pos(
+        Pos("WP") | Pos("WDT")) + (
+        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
+            "fought")) + Pos(
         "IN") + MilitaryConflict()
 
     def interpret(self, match):
         military_conflict, i, j = match.militaryconflict
-        rezultat = military_conflict + IsCommander(MilitaryCommander(HasId() + IsPerson())) + IsMilitaryPersonnelInvolved(
+        rezultat = military_conflict + IsCommander(
+            MilitaryCommander(HasId() + IsPerson())) + IsMilitaryPersonnelInvolved(
             HasId() + IsPerson())
         return rezultat, ReturnValue(i, j)
 
 
 class PersonThatTookPartInConflictNationality(QuestionTemplate):
     regex = Question(Lemma("list")) + (Lemma("person") | Lemma("persons") | Lemma("people")) + (
-        Lemma("that") | Lemma("which")) + (
-        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fought")) + Pos(
-        "IN") + MilitaryConflict() + (Lemma("which") | Lemma("that") | Lemma("who")) + (
-                Lemma("where") | Lemma("are")) + (Lemma("from") | Lemma("born") + Pos("IN")) + Nationality()
+        Pos("WP") | Pos("WDT")) + (
+        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
+            "fought")) + Pos(
+        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + (
+                Lemma("from") | Lemma("bear") + Pos("IN")) + Nationality()
 
     def interpret(self, match):
         military_conflict, i, j = match.militaryconflict
@@ -127,67 +130,67 @@ class PersonThatTookPartInConflictNationality(QuestionTemplate):
 
 class PersonThatTookPartInConflictBornAfter(QuestionTemplate):
     regex = Question(Lemma("list")) + (Lemma("person") | Lemma("persons") | Lemma("people")) + (
-        Lemma("that") | Lemma("which")) + (
-        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fought")) + Pos(
-        "IN") + MilitaryConflict() + (Lemma("which") | Lemma("that") | Lemma("who")) + (
-                Lemma("where") | Lemma("are")) + Lemma("born") + Lemma("after") + BornAfterYear()
+        Pos("WP") | Pos("WDT")) + (
+        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
+            "fought")) + Pos(
+        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + Lemma("bear") + Lemma(
+        "after") + BornAfterYear()
 
     def interpret(self, match):
         military_conflict, i, j = match.militaryconflict
         _born_year, i1, j1 = match.bornafteryear
-        rezultat = military_conflict + IsCommander(
-            MilitaryCommander(IsPerson() + _born_year + HasId())) + IsMilitaryPersonnelInvolved(
-            IsPerson() + _born_year + HasId())
+        rezultat = military_conflict + IsCommander(IsMilitaryPersonnelInvolved(
+            IsPerson() + _born_year + HasId()))
         return rezultat, ReturnValue(i, j)
 
 
 class PersonThatTookPartInConflictBornBefore(QuestionTemplate):
     regex = Question(Lemma("list")) + (Lemma("person") | Lemma("persons") | Lemma("people")) + (
-        Lemma("that") | Lemma("which")) + (
-        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fought")) + Pos(
-        "IN") + MilitaryConflict() + (Lemma("which") | Lemma("that") | Lemma("who")) + (
-                Lemma("where") | Lemma("are")) + Lemma("born") + Lemma("before") + BornBeforeYear()
+        Pos("WP") | Pos("WDT")) + (
+        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
+            "fought")) + Pos(
+        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + Lemma("bear") + Lemma(
+        "before") + BornBeforeYear()
 
     def interpret(self, match):
         military_conflict, i, j = match.militaryconflict
         _born_year, i1, j1 = match.bornbeforeyear
-        rezultat = military_conflict + IsCommander(
-            MilitaryCommander(IsPerson() + _born_year + HasId())) + IsMilitaryPersonnelInvolved(
+        rezultat = military_conflict + IsMilitaryPersonnelInvolved(
             IsPerson() + _born_year + HasId())
         return rezultat, ReturnValue(i, j)
 
 
 class PersonThatTookPartInConflictNationalityBornAfter(QuestionTemplate):
     regex = Question(Lemma("list")) + (Lemma("person") | Lemma("persons") | Lemma("people")) + (
-        Lemma("that") | Lemma("which")) + (
-        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fought")) + Pos(
-        "IN") + MilitaryConflict() + (Lemma("which") | Lemma("that") | Lemma("who")) + (
-                Lemma("where") | Lemma("are")) + (Lemma("from") | Lemma("born") + Pos("IN")) + Nationality() + Lemma(
-        "after") + BornBeforeYear()
+        Pos("WP") | Pos("WDT")) + (
+        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
+            "fought")) + Pos(
+        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + (
+                Lemma("from") | Lemma("bear") + Pos("IN")) + Nationality() + Lemma(
+        "after") + BornAfterYear()
 
     def interpret(self, match):
         military_conflict, i, j = match.militaryconflict
         _nationality, i1, j1 = match.nationality
         _born_year, i2, j2 = match.bornafteryear
-        rezultat = military_conflict + IsCommander(
-            MilitaryCommander(IsPerson() + _born_year + _nationality + HasId())) + IsMilitaryPersonnelInvolved(
+        rezultat = military_conflict + IsMilitaryPersonnelInvolved(
             IsPerson() + _born_year + _nationality + HasId())
         return rezultat, ReturnValue(i, j)
 
 
 class PersonThatTookPartInConflictNationalityBornBefore(QuestionTemplate):
     regex = Question(Lemma("list")) + (Lemma("person") | Lemma("persons") | Lemma("people")) + (
-        Lemma("that") | Lemma("which")) + (
-        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fought")) + Pos(
-        "IN") + MilitaryConflict() + (Lemma("which") | Lemma("that") | Lemma("who")) + (
-                Lemma("where") | Lemma("are")) + (Lemma("from") | Lemma("born") + Pos("IN")) + Nationality() + Lemma(
+        Pos("WP") | Pos("WDT")) + (
+        (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
+            "fought")) + Pos(
+        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + (
+                Lemma("from") | Lemma("bear") + Pos("IN")) + Nationality() + Lemma(
         "before") + BornBeforeYear()
 
     def interpret(self, match):
         military_conflict, i, j = match.militaryconflict
         _nationality, i1, j1 = match.nationality
         _born_year, i2, j2 = match.bornbeforeyear
-        rezultat = military_conflict + IsCommander(
-            MilitaryCommander(IsPerson() + _born_year + _nationality + HasId())) + IsMilitaryPersonnelInvolved(
+        rezultat = military_conflict + military_conflict + IsMilitaryPersonnelInvolved(
             IsPerson() + _born_year + _nationality + HasId())
         return rezultat, ReturnValue(i, j)
