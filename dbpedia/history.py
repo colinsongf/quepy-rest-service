@@ -30,7 +30,8 @@ class Location(Particle):
 
 
 class WeaponUsedByCountryInConflict(QuestionTemplate):
-    regex = Lemma("weapon") + Lemma("use") + Lemma("by") + Country() + Lemma("in") + MilitaryConflict()
+    regex = (Lemma("weapon") | Lemma("weapons")) + Lemma("use") + Lemma("by") + Country() + Lemma(
+        "in") + MilitaryConflict()
 
     def interpret(self, match):
         _military_conflict, i, j = match.militaryconflict

@@ -55,7 +55,7 @@ class HoldsGovernmentPosition(FixedRelation):
 
 
 class DefinitionOf(FixedRelation):
-    #relation = "/common/topic/description"
+    # relation = "/common/topic/description"
     relation = "id"
     reverse = True
 
@@ -205,6 +205,10 @@ class EventStartDateBefore(FixedDataRelation):
     relation = "/time/event/start_date<="
 
 
+class TrackLengthHigh(FixedDataRelation):
+    relation = "/music/release_track/length>="
+
+
 class MusicGenreOf(FixedRelation):
     relation = "/music/artist/genre"
     reverse = True
@@ -214,8 +218,20 @@ class IsAlbum(FixedType):
     fixedtype = "/music/album"
 
 
+class AlbumArtist(FixedDataRelation):
+    relation = "/music/album/artist"
+
+
 class ArtistAlbum(FixedRelation):
     relation = "/music/artist/album"
+
+
+class PrimaryRelease(FixedRelation):
+    relation = "/music/album/primary_release"
+
+
+class TrackList(FixedRelation):
+    relation = "/music/release/track_list"
 
 
 class ProducedBy(FixedRelation):
@@ -333,7 +349,7 @@ class HasImage(FixedDataRelation):
     relation = "/common/topic/image"
 
 
-class SongsAboutStuff(FixedRelation):
+class NameApproximation(FixedDataRelation):
     relation = "name~="
 
 

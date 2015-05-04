@@ -41,8 +41,16 @@ class IsBand(FixedType):
     fixedtype = "dbpedia-owl:Band"
 
 
+class IsSong(FixedType):
+    fixedtype = "dbpedia-owl:Song"
+
+
 class IsAlbum(FixedType):
     fixedtype = "dbpedia-owl:Album"
+
+
+class PartOfAlbum(FixedRelation):
+    relation = "dbpedia-owl:album"
 
 
 class IsTvShow(FixedType):
@@ -152,6 +160,11 @@ class ActiveYears(FixedRelation):
 
 class MusicGenreOf(FixedRelation):
     relation = "dbpedia-owl:genre"
+    reverse = True
+
+
+class ArtistOf(FixedRelation):
+    relation = "dbpedia-owl:artist"
     reverse = True
 
 
