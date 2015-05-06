@@ -11,11 +11,26 @@
 People related regex
 """
 
-from Model import ReturnValue
-from quepy.dsl import HasKeyword, FixedRelation
+
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import *
 from refo import *
+
+
+class University(Particle):
+    regex = Plus(Pos("DT") | Pos("IN") | Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+
+    def interpret(self, match):
+        name = match.words.tokens.title()
+        return LabelOfFixedDataRelation(name)
+
+
+class Location(Particle):
+    regex = Plus(Pos("DT") | Pos("IN") | Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+
+    def interpret(self, match):
+        name = match.words.tokens.title()
+        return LabelOfFixedDataRelation(name)
 
 
 class HasType(FixedRelation):
@@ -100,7 +115,17 @@ class WhoAreChildrenOfQuestion(QuestionTemplate):
         child_name = HasChild(_person)
         return child_name, ReturnValue(i, j)
 
-"""
-    ***************** new stuff here ***********
-"""
 
+class PoliticiansFromCountryStudyAt(QuestionTemplate):
+    """
+    Ex: "List politicians that are from France that studied at University of Cambridge"
+    """
+    regex = Question(Lemma("list")) + (Lemma("politician") | Lemma("politicians")) + (
+        Pos("IN") | Pos("WP") | Pos("WDT")) + Lemma("be") + Pos("IN") + Location() + (
+        Pos("IN") | Pos("WP") | Pos("WDT")) + Lemma("study") + Pos("IN") + University()
+
+    def interpret(self, match):
+        _location, i, j = match.location
+        _university, i1, j2 = match.university
+        result = IsPolitician() + HasNationality(_location) + HasAlmaMater(_university)
+        return result, ReturnValue(i, j)

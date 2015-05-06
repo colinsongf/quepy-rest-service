@@ -25,6 +25,10 @@ class IsPerson(FixedType):
     fixedtype = "foaf:Person"
 
 
+class IsPolitician(FixedType):
+    fixedtype = "dbpedia-owl:Politician"
+
+
 class IsPlace(FixedType):
     fixedtype = "dbpedia:Place"
 
@@ -69,6 +73,14 @@ class UsedInWar(FixedRelation):
     relation = "dbpedia-owl:usedInWar"
 
 
+class HasNationality(FixedRelation):
+    relation = "dbpedia-owl:nationality"
+
+
+class HasAlmaMater(FixedRelation):
+    relation = "dbpedia-owl:almaMater"
+
+
 class UsedByCountry(FixedRelation):
     relation = "dbpprop:usedBy"
 
@@ -105,6 +117,11 @@ class HasName(FixedDataRelation):
 
 class LabelOfFixedDataRelation(FixedDataRelation):
     relation = "rdfs:label"
+    language = "en"
+
+
+class LongName(FixedDataRelation):
+    relation = "dbpedia-owl:longName"
     language = "en"
 
 

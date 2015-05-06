@@ -5,7 +5,7 @@
 # You should have received a copy of license in the LICENSE file.
 #
 # Authors: Rafael Carrascosa <rcarrascosa@machinalis.com>
-#          Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
+# Gonzalo Garcia Berrotaran <ggarcia@machinalis.com>
 
 """
 People related regex
@@ -26,13 +26,29 @@ class Person(Particle):
         return IsPerson() + HasKeyword(name)
 
 
+class University(Particle):
+    regex = Plus(Pos("DT") | Pos("IN") | Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+
+    def interpret(self, match):
+        name = match.words.tokens.title()
+        return EducationUniversity(InstitutionEducation(HasName(name)))
+
+
+class Location(Particle):
+    regex = Plus(Pos("DT") | Pos("IN") | Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+
+    def interpret(self, match):
+        name = match.words.tokens.title()
+        return HasNationality(name)
+
+
 class WhoIs(QuestionTemplate):
     """
     Ex: "Who is Tom Cruise?"
     """
 
     regex = Lemma("who") + Lemma("be") + Person() + \
-        Question(Pos("."))
+            Question(Pos("."))
 
     def interpret(self, match):
         person_name, i, j = match.person
@@ -46,7 +62,7 @@ class HowOldIsQuestion(QuestionTemplate):
     """
 
     regex = Pos("WRB") + Lemma("old") + Lemma("be") + Person() + \
-        Question(Pos("."))
+            Question(Pos("."))
 
     def interpret(self, match):
         person_name, i, j = match.person
@@ -60,7 +76,7 @@ class WhereIsFromQuestion(QuestionTemplate):
     """
 
     regex = Lemmas("where be") + Person() + Lemma("from") + \
-        Question(Pos("."))
+            Question(Pos("."))
 
     def interpret(self, match):
         person_name, i, j = match.person
@@ -75,7 +91,7 @@ class WhoAreParentsOfQuestion(QuestionTemplate):
     """
 
     regex = Lemma("who") + Lemma("be") + Pos("DT") + Lemma("parent") + Pos("IN") + Person() + \
-        Question(Pos(".")) | Lemma("parent") + Pos("IN") + Person() + Question(Pos("."))
+            Question(Pos(".")) | Lemma("parent") + Pos("IN") + Person() + Question(Pos("."))
 
     def interpret(self, match):
         person_name, i, j = match.person
@@ -89,10 +105,37 @@ class WhoAreChildrenOfQuestion(QuestionTemplate):
     EX: "Who are the children's of Bill Gates"
     """
     regex = Lemma("who") + Lemma("be") + Pos("DT") + Lemma("child") + Pos("IN") + Person() + \
-        Question(Pos(".")) | Lemma("child") + Pos("IN") + Person() + Question(Pos("."))
+            Question(Pos(".")) | Lemma("child") + Pos("IN") + Person() + Question(Pos("."))
 
     def interpret(self, match):
         _person, i, j = match.person
         child_name = HasChild(_person)
         return child_name, ReturnValue(i, j)
 
+
+class PoliticiansFromCountry(QuestionTemplate):
+    """
+    Ex: "List politicians that are from France"
+    """
+    regex = Question(Lemma("list")) + (Lemma("politician") | Lemma("politicians")) + (
+        Pos("IN") | Pos("WP") | Pos("WDT")) + Lemma("be") + Pos("IN") + Location()
+
+    def interpret(self, match):
+        _location, i, j = match.location
+        result = IsPerson() + IsPolitician() + _location + HasId()
+        return result, ReturnValue(i, j)
+
+
+class PoliticiansFromCountryStudyAt(QuestionTemplate):
+    """
+    Ex: "List politicians that are from France that studied at University of Cambridge"
+    """
+    regex = Question(Lemma("list")) + (Lemma("politician") | Lemma("politicians")) + (
+        Pos("IN") | Pos("WP") | Pos("WDT")) + Lemma("be") + Pos("IN") + Location() + (
+        Pos("IN") | Pos("WP") | Pos("WDT")) + Lemma("study") + Pos("IN") + University()
+
+    def interpret(self, match):
+        _location, i, j = match.location
+        _university, i1, j2 = match.university
+        result = IsPerson() + IsPolitician() + _location + HasId() + _university
+        return result, ReturnValue(i, j)

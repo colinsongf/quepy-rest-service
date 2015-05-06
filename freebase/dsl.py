@@ -83,6 +83,10 @@ class IsMovie(FixedType):
     fixedtype = "/film/film"
 
 
+class FilmWriteBy(FixedRelation):
+    relation = " /film/film/written_by"
+
+
 class IsMilitaryConflict(FixedType):
     fixedtype = "/military/military_conflict"
 
@@ -112,6 +116,11 @@ class RuntimeOf(FixedRelation):
 
 class IsActor(FixedType):
     fixedtype = "Actor"
+    fixedtyperelation = "/people/person/profession"
+
+
+class IsPolitician(FixedType):
+    fixedtype = "Politician"
     fixedtyperelation = "/people/person/profession"
 
 
@@ -162,6 +171,14 @@ class IsBand(FixedType):
 
 class IsMusicArtist(FixedType):
     fixedtype = "/music/artist"
+
+
+class EducationUniversity(FixedRelation):
+    relation = "/people/person/education"
+
+
+class InstitutionEducation(FixedRelation):
+    relation = "/education/education/institution"
 
 
 class IsMemberOf(FixedRelation):

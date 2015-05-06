@@ -18,6 +18,14 @@ from dsl import *
 nouns = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
 
 
+class Topic(Particle):
+    regex = Pos("IN") | Pos("JJ") | Pos("NN") | Pos("NNP") | Pos("NNS") | Pos("NNPS")
+
+    def interpret(self, match):
+        name = match.words.tokens.title()
+        return NameApproximation(u"*" + name + u"*")
+
+
 class Movie(Particle):
     regex = Question(Pos("DT")) + nouns
 
@@ -113,7 +121,7 @@ class ActedOnQuestion(QuestionTemplate):
         _actor, i, j = match.actor
         performance = IsPerformance() + PerformanceOfActor(_actor)
         movie = IsMovie() + HasPerformance(performance)
-        movie_name = NameOf(movie)
+        movie_name = NameOf(movie) + HasId()
         return movie_name, ReturnValue(i, j)
 
 
@@ -188,3 +196,30 @@ class PlotOfQuestion(QuestionTemplate):
         _movie, i, j = match.movie
         definition = DefinitionOf(_movie)
         return definition, ReturnValue(i, j)
+
+"""
+class MoviesAboutStuff(QuestionTemplate):
+    \"""
+    Ex: list movie about love
+    \"""
+    movie = (Lemma("movie") | Lemma("movies") | Lemma("film"))
+    regex = Question(Lemma("list")) + movie + Lemma("IN") + Topic()
+
+    def interpret(self, match):
+        _topic, i, j = match.topic
+        result = IsMovie() + _topic + HasId()
+        return result, ReturnValue(i, j)
+
+
+class WhoWroteMovie(QuestionTemplate):
+    \"""
+    Ex: who wrote the script for movie October Sky
+    \"""
+    movie = (Lemma("movie") | Lemma("movies") | Lemma("film"))
+    regex = Lemma("who") + Lemma("write") + Lemma("DT") + (Lemma("script")) + Lemma("for") + movie + Movie()
+
+    def interpret(self, match):
+        _movie, i, j = match.movie
+        result = _movie + FilmWriteBy(HasId())
+        return result, ReturnValue(i, j)
+"""

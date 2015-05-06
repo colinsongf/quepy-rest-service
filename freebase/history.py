@@ -22,7 +22,7 @@ class Nationality(Particle):
 
 
 class Location(Particle):
-    regex = Plus(Pos("DT") | Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+    regex = Plus(Pos("DT") | Pos("IN") | Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
 
     def interpret(self, match):
         name = match.words.tokens.title()
