@@ -31,7 +31,7 @@ class University(Particle):
 
     def interpret(self, match):
         name = match.words.tokens.title()
-        return EducationUniversity(InstitutionEducation(HasName(name)))
+        return PeopleEducationUniversity(InstitutionEducation(HasName(name)))
 
 
 class Location(Particle):

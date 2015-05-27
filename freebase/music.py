@@ -242,7 +242,7 @@ class AlbumsOfQuestion(QuestionTemplate):
     def interpret(self, match):
         _band_name, i, j = match.band
         album = IsAlbum() + ProducedBy(_band_name)
-        name = NameOf(album)
+        name = NameOf(album + HasId())
         return name, ReturnValue(i, j)
 
 

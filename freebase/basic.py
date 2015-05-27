@@ -68,6 +68,14 @@ class MilitaryConflict(Particle):
         return IsMilitaryConflict() + HasName(name)
 
 
+class EducationInstitution(Particle):
+    regex = Plus(Pos("DT") | Pos("IN") | nouns)
+
+    def interpret(self, match):
+        name = match.words.tokens.title()
+        return  IsEducation() + InstitutionEducation(HasName(name) + HasId())
+
+
 class Thing(Particle):
     regex = Plus(Question(Pos("JJ")) + (Pos("NN") | Pos("NNP") | Pos("NNS")) |
                  Pos("VBN"))
@@ -109,8 +117,8 @@ class WhereIsQuestion(QuestionTemplate):
 
 
 class WhatIsLocation(QuestionTemplate):
-    regex = (Lemma("what") + Lemma("is") + Lemma("location") + Location()) | (
-        Lemma("location") + Location())
+    regex = (Lemma("what") + Lemma("is") + (Lemma("location") | Lemma("place")) + Location() + Question(Pos("."))) | (
+        (Lemma("location") | Lemma("place")) + Location() + Question(Pos(".")))
 
     def interpret(self, match):
         _location, i, j = match.location
@@ -160,3 +168,12 @@ class WhatIsMilitaryConflict(QuestionTemplate):
     def interpret(self, match):
         _military_conflict, i, j = match.militaryconflict
         return _military_conflict + HasId(), ReturnValue(i, j)
+
+
+class WhatIsEducationInstitution(QuestionTemplate):
+    regex = (Lemma("what") + Lemma("is") + Lemma("education") + Lemma("institution") + EducationInstitution()) | (
+        Lemma("education") + Lemma("institution") + EducationInstitution())
+
+    def interpret(self, match):
+        _military_conflict, i, j = match.educationinstitution
+        return _military_conflict, ReturnValue(i, j)

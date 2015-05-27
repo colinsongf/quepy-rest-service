@@ -49,6 +49,10 @@ class IsCountry(FixedType):
     fixedtype = "/location/country"
 
 
+class IsEducation(FixedType):
+    fixedtype = "/education/education"
+
+
 class HoldsGovernmentPosition(FixedRelation):
     relation = "/government/government_position_held/office_holder"
     reverse = True
@@ -173,7 +177,7 @@ class IsMusicArtist(FixedType):
     fixedtype = "/music/artist"
 
 
-class EducationUniversity(FixedRelation):
+class PeopleEducationUniversity(FixedRelation):
     relation = "/people/person/education"
 
 

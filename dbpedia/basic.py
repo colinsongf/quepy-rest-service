@@ -157,8 +157,8 @@ class WhereIsQuestion(QuestionTemplate):
 
 
 class WhatIsLocation(QuestionTemplate):
-    regex = (Lemma("what") + Lemma("is") + Lemma("location") + Location()) | (
-        Lemma("location") + Location())
+    regex = (Lemma("what") + Lemma("is") + (Lemma("location") | Lemma("place")) + Location() + Question(Pos("."))) | (
+        (Lemma("location") | Lemma("place")) + Location() + Question(Pos(".")))
 
     def interpret(self, match):
         _location, i, j = match.location
