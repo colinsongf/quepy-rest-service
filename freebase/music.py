@@ -26,11 +26,11 @@ class Album(Particle):
 
 
 class Band(Particle):
-    regex = Question(Pos("DT")) + Plus(Pos("NN") | Pos("NNP"))
+    regex = Question(Pos("DT")) + Plus(Pos("NN") | Pos("NNP") | Pos("CD"))
 
     def interpret(self, match):
         name = match.words.tokens.title()
-        return IsBand() + HasKeyword(name)
+        return IsMusicArtist() + HasKeyword(name)
 
 
 class BandName(Particle):
