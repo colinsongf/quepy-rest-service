@@ -112,7 +112,7 @@ class QuestionTemplate(object):
 
     def get_interpretation(self, words):
         rulename = self.__class__.__name__
-        print("Trying to match with regex: {}".format(rulename))
+        print("Trying to match wit h regex: {}".format(rulename))
 
         match = refo.match(self.regex + Literal(_EOL), words + [_EOL])
 

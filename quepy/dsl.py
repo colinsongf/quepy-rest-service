@@ -39,7 +39,12 @@ class FixedRelation(Expression):
 
 
 class FixedRelationDataExtract(Expression):
-
+    """
+    Expression for fixed relation. It was made so we could extract data from
+    freebase MQL without reverse operation;
+    EX: say you wanna get the id of a person you would say isPerson() + HasID();
+    that would make {type/object/type : /people/person, id : []} crate blank node
+    """
     relation = None
 
     def __init__(self):

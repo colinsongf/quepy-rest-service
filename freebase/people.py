@@ -23,7 +23,10 @@ class Person(Particle):
 
     def interpret(self, match):
         name = match.words.tokens
-        return IsPerson() + HasKeyword(name)
+        person = IsPerson()
+        hasname = HasKeyword(name)
+        person_hasname = person + hasname
+        return person_hasname
 
 
 class University(Particle):

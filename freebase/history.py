@@ -116,7 +116,7 @@ class PersonThatTookPartInConflictNationality(QuestionTemplate):
         Pos("WP") | Pos("WDT")) + (
         (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
             "fought")) + Pos(
-        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + (
+        "IN") + MilitaryConflict() + Plus(Pos("WP") | Pos("WDT") | Pos("WRB") | Lemma("be")) + (
                 Lemma("from") | Lemma("bear") + Pos("IN")) + Nationality()
 
     def interpret(self, match):
@@ -133,7 +133,7 @@ class PersonThatTookPartInConflictBornAfter(QuestionTemplate):
         Pos("WP") | Pos("WDT")) + (
         (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
             "fought")) + Pos(
-        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + Lemma("bear") + Lemma(
+        "IN") + MilitaryConflict() + Plus(Pos("WP") | Pos("WDT") | Pos("WRB") | Lemma("be")) + Lemma("bear") + Lemma(
         "after") + BornAfterYear()
 
     def interpret(self, match):
@@ -149,7 +149,7 @@ class PersonThatTookPartInConflictBornBefore(QuestionTemplate):
         Pos("WP") | Pos("WDT")) + (
         (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
             "fought")) + Pos(
-        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + Lemma("bear") + Lemma(
+        "IN") + MilitaryConflict() + Plus(Pos("WP") | Pos("WDT") | Pos("WRB") | Lemma("be")) + Lemma("bear") + Lemma(
         "before") + BornBeforeYear()
 
     def interpret(self, match):
@@ -165,7 +165,7 @@ class PersonThatTookPartInConflictNationalityBornAfter(QuestionTemplate):
         Pos("WP") | Pos("WDT")) + (
         (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
             "fought")) + Pos(
-        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + (
+        "IN") + MilitaryConflict() + Plus(Pos("WP") | Pos("WDT") | Pos("WRB") | Lemma("be")) + (
                 Lemma("from") | Lemma("bear") + Pos("IN")) + Nationality() + Lemma(
         "after") + BornAfterYear()
 
@@ -183,7 +183,7 @@ class PersonThatTookPartInConflictNationalityBornBefore(QuestionTemplate):
         Pos("WP") | Pos("WDT")) + (
         (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
             "fought")) + Pos(
-        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + (
+        "IN") + MilitaryConflict() + Plus(Pos("WP") | Pos("WDT") | Pos("WRB") | Lemma("be")) + (
                 Lemma("from") | Lemma("bear") + Pos("IN")) + Nationality() + Lemma(
         "before") + BornBeforeYear()
 
