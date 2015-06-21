@@ -68,7 +68,7 @@ class PersonThatTookPartInConflictNationality(QuestionTemplate):
         Pos("WP") | Pos("WDT")) + (
         (Lemma("was") + Lemma("involved")) | (Lemma("took") + Lemma("part")) | Lemma("fight") | Lemma(
             "fought")) + Pos(
-        "IN") + MilitaryConflict() + (Pos("WP") | Pos("WDT")) + Lemma("be") + (
+        "IN") + MilitaryConflict() + Plus(Pos("WP") | Pos("WDT") | Pos("WRB") | Lemma("be")) + (
                 Lemma("from") | Lemma("bear") + Pos("IN")) + Country()
 
     def interpret(self, match):
