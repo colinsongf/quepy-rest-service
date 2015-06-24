@@ -172,7 +172,7 @@ class WhatIsMilitaryConflict(QuestionTemplate):
 
 class WhatIsEducationInstitution(QuestionTemplate):
     regex = (Lemma("what") + Lemma("is") + Lemma("education") + Lemma("institution") + EducationInstitution()) | (
-        Lemma("education") + Lemma("institution") + EducationInstitution())
+        Lemma("education") + Lemma("institution") + EducationInstitution()) + Question(Pos("."))
 
     def interpret(self, match):
         _military_conflict, i, j = match.educationinstitution
