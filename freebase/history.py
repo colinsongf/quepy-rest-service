@@ -12,7 +12,6 @@ class MilitaryConflict(Particle):
         name = match.words.tokens
         return IsMilitaryConflict() + HasName(name)
 
-
 class Nationality(Particle):
     regex = Question(Pos("DT")) + Plus(nouns | Pos("IN"))
 
@@ -62,8 +61,8 @@ class BornBeforeYear(Particle):
 
 
 class ConflictThatTookPlaceInCountry(QuestionTemplate):
-    regex = Question(Lemma("list")) + (Lemma("conflict") | Lemma("conflicts")) + (Lemma("that") | Lemma("which")) + \
-            Lemma("took") + Lemma("place") + Pos("IN") + Location()
+    regex = Question(Lemma("list")) + (Lemma("conflict")) + (Pos("IN")| Pos("WP") | Pos("WDT")) + \
+            Lemma("take") + Lemma("place") + Pos("IN") + Location()
 
     def interpret(self, match):
         _location, i, j = match.location
@@ -73,8 +72,8 @@ class ConflictThatTookPlaceInCountry(QuestionTemplate):
 
 
 class ConflictThatTookPlaceInCountryAfterYear(QuestionTemplate):
-    regex = Question(Lemma("list")) + (Lemma("conflict") | Lemma("conflicts")) + (Lemma("that") | Lemma("which")) + \
-            Lemma("took") + Lemma("place") + Pos("IN") + Location() + Lemma("after") + YearAf()
+    regex = Question(Lemma("list")) + (Lemma("conflict")) + (Pos("IN")| Pos("WP") | Pos("WDT")) + \
+            Lemma("take") + Lemma("place") + Pos("IN") + Location() + Lemma("after") + YearAf()
 
     def interpret(self, match):
         _location, i, j = match.location
@@ -85,8 +84,8 @@ class ConflictThatTookPlaceInCountryAfterYear(QuestionTemplate):
 
 
 class ConflictThatTookPlaceInCountryBeforeYear(QuestionTemplate):
-    regex = Question(Lemma("list")) + (Lemma("conflict") | Lemma("conflicts")) + (Lemma("that") | Lemma("which")) + \
-            Lemma("took") + Lemma("place") + Pos("IN") + Location() + Lemma("before") + YearBf()
+    regex = Question(Lemma("list")) + (Lemma("conflict")) + (Pos("IN")| Pos("WP") | Pos("WDT")) + \
+            Lemma("take") + Lemma("place") + Pos("IN") + Location() + Lemma("before") + YearBf()
 
     def interpret(self, match):
         _location, i, j = match.location

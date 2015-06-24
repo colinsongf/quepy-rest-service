@@ -41,8 +41,8 @@ class WeaponUsedByCountryInConflict(QuestionTemplate):
 
 
 class ConflictThatTookPlaceInCountry(QuestionTemplate):
-    regex = Question(Lemma("list")) + (Lemma("conflict") | Lemma("conflicts")) + (
-        Lemma("that") | Lemma("which")) + Lemma("took") + Lemma("place") + Pos("IN") + Location()
+    regex = Question(Lemma("list")) + (Lemma("conflict")) + (Pos("IN")| Pos("WP") | Pos("WDT")) + \
+            Lemma("take") + Lemma("place") + Pos("IN") + Location()
 
     def interpret(self, match):
         _location, i, j = match.location

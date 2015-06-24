@@ -208,7 +208,7 @@ class SongsAboutStuffQuestion(QuestionTemplate):
 
     def interpret(self, match):
         _song, i, j = match.topic
-        return _song + HasId(), ReturnValue(i, j)
+        return IsAlbum() + TrackList(_song + HasId()), ReturnValue(i, j)
 
 
 class SongsAboutStuffWrittenByPersonQuestion(QuestionTemplate):
